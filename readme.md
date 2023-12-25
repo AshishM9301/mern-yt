@@ -1,4 +1,4 @@
-# client Rect Setup
+# Client React Setup
 
 # connecting Both Setup - Client & Server
 

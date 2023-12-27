@@ -1,10 +1,18 @@
 import React, { useState } from "react";
+import { useRegisterMutation } from "../features/authApi";
+
+import { useDispatch } from "react-redux";
+import { login } from "../features/auth";
 
 const SignUp = () => {
+  const dispatch = useDispatch();
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [register] = useRegisterMutation();
 
   const handleRegistration = async () => {
     try {
@@ -21,22 +29,17 @@ const SignUp = () => {
         }
       }
 
-      console.log(body);
-
-      await fetch("http://localhost:5000/api/user/register", {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-          "Content-Type": "application/json",
-          // 'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      })
-        .then((data) => data.json())
-        .then((res) => {
-          if (res.success) {
-            console.log("Register");
-          }
-        });
+      await register(body).then((result) => {
+        let res = result.data;
+        if (res.success) {
+          console.log(res);
+          dispatch(
+            login({
+              user: res.data,
+            })
+          );
+        }
+      });
     } catch (err) {
       console.log(err);
     }

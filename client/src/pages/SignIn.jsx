@@ -1,6 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
+import { useLoginMutation } from "../features/authApi";
+import { useDispatch } from "react-redux";
+import { login } from "../features/auth";
 
 const SignIn = () => {
+  const dispatch = useDispatch();
+
+  const [user, setUser] = useState({ email: "", password: "" });
+
+  const [loginApi] = useLoginMutation();
+
+  const handleLogin = async () => {
+    try {
+      for (const key in user) {
+        if (!user[key]) {
+          throw Error(`${key.toLocaleUpperCase()} is Required`);
+        }
+      }
+
+      await loginApi(user).then((results) => {
+        let res = results.data;
+
+        if (res.success) {
+          dispatch(login({ user: res.data }));
+          setUser({ email: "", password: "" });
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div className="min-w-screen min-h-screen bg-gray-900 flex items-center justify-center px-5 py-5">
       <div
@@ -232,6 +262,9 @@ const SignIn = () => {
                       type="email"
                       className="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500"
                       placeholder="johnsmith@example.com"
+                      onChange={(e) =>
+                        setUser({ ...user, email: e.target.value })
+                      }
                     />
                   </div>
                 </div>
@@ -249,13 +282,19 @@ const SignIn = () => {
                       type="password"
                       className="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500"
                       placeholder="************"
+                      onChange={(e) =>
+                        setUser({ ...user, password: e.target.value })
+                      }
                     />
                   </div>
                 </div>
               </div>
               <div className="flex -mx-3">
                 <div className="w-full px-3 mb-5">
-                  <button className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold">
+                  <button
+                    onClick={() => handleLogin()}
+                    className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold"
+                  >
                     Login
                   </button>
                 </div>

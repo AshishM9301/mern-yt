@@ -1,7 +1,11 @@
 import React from "react";
 import { Outlet, Link } from "react-router-dom";
 
+import { useSelector } from "react-redux";
+
 const Navbar = () => {
+  const { isLoggedIn } = useSelector((state) => state.auth);
+
   return (
     <div>
       {/* A "layout route" is a good place to put markup you want to
@@ -11,13 +15,18 @@ const Navbar = () => {
           <li>
             <Link to="/">Home</Link>
           </li>
-
-          <li>
-            <Link to="/sign-up">Register</Link>
-          </li>
-          <li>
-            <Link to="/sign-in">Login</Link>
-          </li>
+          <>
+            {!isLoggedIn && (
+              <>
+                <li>
+                  <Link to="/sign-up">Register</Link>
+                </li>
+                <li>
+                  <Link to="/sign-in">Login</Link>
+                </li>
+              </>
+            )}
+          </>
         </ul>
       </nav>
 

@@ -2,11 +2,14 @@ const UserModal = require("../../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const generateToken = require("../../services/token");
+const createHttpError = require("http-errors");
 require("dotenv").config({ path: ".env" });
 
 const register = async (req, res, next) => {
   try {
     const { firstName, lastName, email, password } = req.body;
+
+    // console.log(req.body);
 
     // Encyption and Hashing
     // password as hashing
